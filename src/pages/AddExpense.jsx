@@ -20,18 +20,26 @@ const AddExpense = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (isEditing && id) {
-      const expense = getExpenseById(id);
-      if (expense) {
-        setFormData({
-          title: expense.title,
-          amount: expense.amount.toString(),
-          category: expense.category,
-          date: new Date(expense.date).toISOString().split('T')[0],
-          description: expense.description || ''
-        });
+    const fetchExpense = async () => {
+      if (isEditing && id) {
+        try {
+          const expense = await getExpenseById(id);
+          if (expense) {
+            setFormData({
+              title: expense.title,
+              amount: expense.amount.toString(),
+              category: expense.category,
+              date: new Date(expense.date).toISOString().split('T')[0],
+              description: expense.description || ''
+            });
+          }
+        } catch (err) {
+          console.error('Failed to fetch expense:', err);
+        }
       }
-    }
+    };
+
+    fetchExpense();
   }, [id, isEditing, getExpenseById]);
 
   const validateForm = () => {
@@ -77,42 +85,45 @@ const AddExpense = () => {
     e.preventDefault();
 
     if (!validateForm()) {
+      console.warn('Form validation failed:', errors);
       return;
     }
 
-    try {
-      const expenseData = {
-        ...formData,
-        title: formData.title.trim(),
-        amount: parseFloat(formData.amount),
-        description: formData.description.trim()
-      };
+    const expenseData = {
+      ...formData,
+      title: formData.title.trim(),
+      amount: parseFloat(formData.amount),
+      description: formData.description.trim()
+    };
 
+    try {
       if (isEditing) {
         await updateExpense(id, expenseData);
       } else {
         await addExpense(expenseData);
       }
 
+      console.log('Expense saved successfully!');
       navigate('/expenses');
     } catch (error) {
-      console.error('Error saving expense:', error);
+      console.error('Error saving expense:', error.response?.data || error.message);
+      alert('Failed to save expense. Please check console for details.');
     }
   };
+
+  const fallbackCategories = ['Food', 'Transport', 'Shopping', 'Bills', 'Other'];
+  const categoryOptions = categories?.length ? categories : fallbackCategories;
 
   return (
     <div className="add-expense-page">
       <div className="page-header">
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate('/expenses')}
-        >
+        <button className="btn btn-secondary" onClick={() => navigate('/expenses')}>
           <ArrowLeft size={18} />
           Back to Expenses
         </button>
 
         <h1 className="text-3xl font-bold">
-          {isEditing ? '✏️ Edit Expense' : '➕ Add New Expense'}
+          {isEditing ? '✏ Edit Expense' : '➕ Add New Expense'}
         </h1>
       </div>
 
@@ -145,9 +156,7 @@ const AddExpense = () => {
                     value={formData.title}
                     onChange={handleChange}
                   />
-                  {errors.title && (
-                    <span className="error-message">{errors.title}</span>
-                  )}
+                  {errors.title && <span className="error-message">{errors.title}</span>}
                 </div>
 
                 <div className="form-group">
@@ -165,15 +174,13 @@ const AddExpense = () => {
                     value={formData.amount}
                     onChange={handleChange}
                   />
-                  {errors.amount && (
-                    <span className="error-message">{errors.amount}</span>
-                  )}
+                  {errors.amount && <span className="error-message">{errors.amount}</span>}
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">
                     <Tag size={16} />
-                    🏷️ Category *
+                    🏷 Category *
                   </label>
                   <select
                     name="category"
@@ -181,18 +188,16 @@ const AddExpense = () => {
                     value={formData.category}
                     onChange={handleChange}
                   >
-                    <option value="" disabled>
+                    <option value="" disabled hidden>
                       Select a category
                     </option>
-                    {categories.map(category => (
+                    {categoryOptions.map(category => (
                       <option key={category} value={category}>
                         {category}
                       </option>
                     ))}
                   </select>
-                  {errors.category && (
-                    <span className="error-message">{errors.category}</span>
-                  )}
+                  {errors.category && <span className="error-message">{errors.category}</span>}
                 </div>
 
                 <div className="form-group">
@@ -207,9 +212,7 @@ const AddExpense = () => {
                     value={formData.date}
                     onChange={handleChange}
                   />
-                  {errors.date && (
-                    <span className="error-message">{errors.date}</span>
-                  )}
+                  {errors.date && <span className="error-message">{errors.date}</span>}
                 </div>
               </div>
 
@@ -226,18 +229,10 @@ const AddExpense = () => {
               </div>
 
               <div className="form-actions">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => navigate('/expenses')}
-                >
+                <button type="button" className="btn btn-secondary" onClick={() => navigate('/expenses')}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={loading}
-                >
+                <button type="submit" className="btn btn-primary" disabled={loading}>
                   <Save size={18} />
                   {loading
                     ? '💾 Saving...'

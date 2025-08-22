@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ExpenseContext = createContext();
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'http://localhost:5000/api/expenses';
 
 export const useExpense = () => {
   const context = useContext(ExpenseContext);
@@ -27,7 +27,7 @@ export const ExpenseProvider = ({ children }) => {
       setExpenses(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch expenses');
+      setError('Failed to fetch expense');
       console.error('Error fetching expenses:', err);
     } finally {
       setLoading(false);
