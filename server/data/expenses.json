@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1755758658961",
+    "createdAt": "2025-08-21T06:44:18.961Z"
+  },
+  {
+    "id": "1755763201809",
+    "title": "Festival Things",
+    "amount": 45.9,
+    "category": "Shopping",
+    "date": "2025-08-21",
+    "description": "I had brought some specific things for upcoming festival",
+    "createdAt": "2025-08-21T08:00:01.809Z"
+  },
+  {
+    "id": "1755763476814",
+    "title": "festival",
+    "amount": 45.9,
+    "category": "Shopping",
+    "date": "2025-08-21",
+    "description": "",
+    "createdAt": "2025-08-21T08:04:36.814Z"
+  },
+  {
+    "id": "1755763652373",
+    "title": "festival",
+    "amount": 45.8,
+    "category": "Shopping",
+    "date": "2024-08-09",
+    "description": "",
+    "createdAt": "2025-08-21T08:07:32.374Z"
+  },
+  {
+    "id": "1755764512078",
+    "title": "grocery",
+    "amount": 100.78,
+    "category": "Personal Care",
+    "date": "2025-06-12",
+    "description": "",
+    "createdAt": "2025-08-21T08:21:52.078Z"
+  }
+]
