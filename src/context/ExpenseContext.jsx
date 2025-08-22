@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ExpenseContext = createContext();
 
-const API_BASE = 'http://localhost:5000/api/expenses';
+const API_BASE = 'http://localhost:5000/api';
 
 export const useExpense = () => {
   const context = useContext(ExpenseContext);
@@ -37,7 +37,7 @@ export const ExpenseProvider = ({ children }) => {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/categories`);
+      const response = await axios.get(`${API_BASE}expenses/categories`);
       setCategories(response.data);
     } catch (err) {
       console.error('Error fetching categories:', err);

@@ -20,26 +20,18 @@ const AddExpense = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const fetchExpense = async () => {
-      if (isEditing && id) {
-        try {
-          const expense = await getExpenseById(id);
-          if (expense) {
-            setFormData({
-              title: expense.title,
-              amount: expense.amount.toString(),
-              category: expense.category,
-              date: new Date(expense.date).toISOString().split('T')[0],
-              description: expense.description || ''
-            });
-          }
-        } catch (err) {
-          console.error('Failed to fetch expense:', err);
-        }
+    if (isEditing && id) {
+      const expense = getExpenseById(id);
+      if (expense) {
+        setFormData({
+          title: expense.title,
+          amount: expense.amount.toString(),
+          category: expense.category,
+          date: new Date(expense.date).toISOString().split('T')[0],
+          description: expense.description || ''
+        });
       }
-    };
-
-    fetchExpense();
+    }
   }, [id, isEditing, getExpenseById]);
 
   const validateForm = () => {
@@ -103,10 +95,10 @@ const AddExpense = () => {
         await addExpense(expenseData);
       }
 
-      console.log('Expense saved successfully!');
+      console.log('✅ Expense saved successfully!');
       navigate('/expenses');
     } catch (error) {
-      console.error('Error saving expense:', error.response?.data || error.message);
+      console.error('❌ Error saving expense:', error.response?.data || error.message);
       alert('Failed to save expense. Please check console for details.');
     }
   };
@@ -118,7 +110,6 @@ const AddExpense = () => {
     <div className="add-expense-page">
       <div className="page-header">
         <button className="btn btn-secondary" onClick={() => navigate('/expenses')}>
-          <ArrowLeft size={18} />
           Back to Expenses
         </button>
 
@@ -145,7 +136,6 @@ const AddExpense = () => {
               <div className="form-grid grid grid-2">
                 <div className="form-group">
                   <label className="form-label">
-                    <FileText size={16} />
                     💡 Title *
                   </label>
                   <input
@@ -161,7 +151,6 @@ const AddExpense = () => {
 
                 <div className="form-group">
                   <label className="form-label">
-                    <DollarSign size={16} />
                     💵 Amount *
                   </label>
                   <input
@@ -179,7 +168,6 @@ const AddExpense = () => {
 
                 <div className="form-group">
                   <label className="form-label">
-                    <Tag size={16} />
                     🏷 Category *
                   </label>
                   <select
@@ -202,7 +190,6 @@ const AddExpense = () => {
 
                 <div className="form-group">
                   <label className="form-label">
-                    <Calendar size={16} />
                     📅 Date *
                   </label>
                   <input
@@ -233,7 +220,6 @@ const AddExpense = () => {
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  <Save size={18} />
                   {loading
                     ? '💾 Saving...'
                     : isEditing
