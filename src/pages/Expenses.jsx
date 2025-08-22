@@ -45,13 +45,13 @@ const Expenses = () => {
     });
 
   const handleEdit = (expense) => {
-    navigate(`/edit/${expense.id}`);
+    navigate(`/edit/${expense._id}`); // ✅ fixed (MongoDB uses _id)
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this expense?')) {
       try {
-        await deleteExpense(id);
+        await deleteExpense(id); // ✅ now id will be _id
       } catch (error) {
         console.error('Error deleting expense:', error);
       }
@@ -133,10 +133,10 @@ const Expenses = () => {
         <div className="expenses-grid grid grid-3">
           {filteredExpenses.map((expense) => (
             <ExpenseCard
-              key={expense.id}
+              key={expense._id}             // ✅ use _id as key
               expense={expense}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={() => handleDelete(expense._id)} // ✅ pass _id here
             />
           ))}
         </div>

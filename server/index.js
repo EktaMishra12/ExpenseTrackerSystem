@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import expenseRoutes from "./routes/expenseRoutes.js";
+import cors from "cors";
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -12,8 +13,11 @@ const __dirname = path.dirname(__filename);
 
 // Load .env (inside server folder)
 dotenv.config({ path: path.join(__dirname, ".env") });
-
 const app = express();
+app.use(cors({
+  origin: "http://localhost:5173"
+}));
+
 const PORT = process.env.PORT || 5000;
 
 // ✅ Enable CORS for frontend origin
