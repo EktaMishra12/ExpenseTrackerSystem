@@ -5,7 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import expenseRoutes from "./routes/expenseRoutes.js";
-import cors from "cors";
+
 
 // Fix __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
