@@ -15,11 +15,10 @@ export const useExpense = () => {
 
 export const ExpenseProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  
+  // ✅ Fetch all expenses
   const fetchExpenses = async () => {
     try {
       setLoading(true);
@@ -34,17 +33,7 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
-
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get(`${API_BASE}/categories`);
-      setCategories(response.data);
-    } catch (err) {
-      console.warn('⚠️ No /categories endpoint yet, skipping...');
-    }
-  };
-
-
+  // ✅ Add expense
   const addExpense = async (expenseData) => {
     try {
       setLoading(true);
@@ -61,7 +50,7 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
-
+  // ✅ Update expense
   const updateExpense = async (id, expenseData) => {
     try {
       setLoading(true);
@@ -80,7 +69,7 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
-
+  // ✅ Delete expense
   const deleteExpense = async (id) => {
     try {
       setLoading(true);
@@ -96,19 +85,18 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
-
+  // ✅ Get single expense
   const getExpenseById = (id) => {
     return expenses.find(expense => expense._id === id);
   };
 
+  // Load expenses on mount
   useEffect(() => {
     fetchExpenses();
-    fetchCategories();
   }, []);
 
   const value = {
     expenses,
-    categories,
     loading,
     error,
     addExpense,

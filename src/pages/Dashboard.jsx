@@ -1,22 +1,26 @@
 import { useState, useMemo } from 'react';
 import { useExpense } from '../context/ExpenseContext';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  PieChart, Pie, Cell, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 import { DollarSign, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
 import StatCard from '../components/StatCard';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { expenses } = useExpense();
   const [timeFilter, setTimeFilter] = useState('all');
 
-  // Calculate statistics
   const stats = useMemo(() => {
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
-    
+
     const filteredExpenses = expenses.filter(expense => {
       const expenseDate = new Date(expense.date);
-      
       switch (timeFilter) {
         case 'month':
           return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
@@ -27,9 +31,9 @@ const Dashboard = () => {
       }
     });
 
-    const totalAmount = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+    const totalAmount = filteredExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0);
     const avgAmount = filteredExpenses.length > 0 ? totalAmount / filteredExpenses.length : 0;
-    
+
     return {
       total: totalAmount,
       count: filteredExpenses.length,
@@ -38,13 +42,11 @@ const Dashboard = () => {
     };
   }, [expenses, timeFilter]);
 
-  // Category breakdown for pie chart
   const categoryData = useMemo(() => {
     const categoryTotals = {};
-    
     stats.expenses.forEach(expense => {
       const category = expense.category || 'Other';
-      categoryTotals[category] = (categoryTotals[category] || 0) + parseFloat(expense.amount);
+      categoryTotals[category] = (categoryTotals[category] || 0) + parseFloat(expense.amount || 0);
     });
 
     return Object.entries(categoryTotals).map(([category, amount]) => ({
@@ -54,19 +56,17 @@ const Dashboard = () => {
     }));
   }, [stats]);
 
-  // Monthly breakdown for bar chart
   const monthlyData = useMemo(() => {
     const monthlyTotals = {};
-    
     expenses.forEach(expense => {
       const date = new Date(expense.date);
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + parseFloat(expense.amount);
+      monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + parseFloat(expense.amount || 0);
     });
 
     return Object.entries(monthlyTotals)
       .sort(([a], [b]) => a.localeCompare(b))
-      .slice(-6) // Last 6 months
+      .slice(-6)
       .map(([month, amount]) => ({
         month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
         amount
@@ -77,15 +77,16 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <div className="dashboard-header">
+      {/* Header */}
+      <div className="dashboard-header flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold gradient-text">💰 Expense Dashboard</h1>
           <p className="text-muted">Track your expenses and spending patterns with beautiful insights</p>
         </div>
-        
+
         <div className="time-filter">
-          <select 
-            value={timeFilter} 
+          <select
+            value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value)}
             className="form-control"
           >
@@ -97,35 +98,16 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="stats-grid grid grid-4 mb-6">
-        <StatCard
-          title="💸 Total Expenses"
-          value={stats.total}
-          icon={DollarSign}
-          color="primary"
-        />
-        <StatCard
-          title="📊 Transactions"
-          value={stats.count}
-          icon={TrendingUp}
-          color="secondary"
-        />
-        <StatCard
-          title="📈 Average Expense"
-          value={stats.average}
-          icon={TrendingDown}
-          color="accent"
-        />
-        <StatCard
-          title="🏷️ Categories"
-          value={categoryData.length}
-          icon={Calendar}
-          color="warning"
-        />
+      <div className="stats-grid grid grid-4 gap-4 mb-6">
+        <StatCard title="💸 Total Expenses" value={stats.total} icon={DollarSign} color="primary" />
+        <StatCard title="📊 Transactions" value={stats.count} icon={TrendingUp} color="secondary" />
+        <StatCard title="📈 Average Expense" value={stats.average.toFixed(2)} icon={TrendingDown} color="accent" />
+        <StatCard title="🏷️ Categories" value={categoryData.length} icon={Calendar} color="warning" />
       </div>
 
       {/* Charts */}
-      <div className="charts-grid grid grid-2 mb-6">
+      <div className="charts-grid grid grid-2 gap-4 mb-6">
+        {/* Category PieChart */}
         <div className="chart-card card">
           <div className="card-header">
             <h3 className="card-title">🎯 Expenses by Category</h3>
@@ -158,6 +140,7 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Monthly BarChart */}
         <div className="chart-card card">
           <div className="card-header">
             <h3 className="card-title">📈 Monthly Spending Trend</h3>
@@ -191,24 +174,27 @@ const Dashboard = () => {
           {stats.expenses.length > 0 ? (
             <div className="expense-list">
               {stats.expenses.slice(0, 5).map((expense) => (
-                <div key={expense.id} className="expense-item">
+                <div
+                  key={expense.id || expense.title + expense.date}
+                  className="expense-item flex justify-between items-center mb-2"
+                >
                   <div className="expense-info">
-                    <h4 className="expense-name">{expense.title}</h4>
-                    <p className="expense-category text-muted">{expense.category}</p>
+                    <h4 className="expense-name font-semibold">{expense.title}</h4>
+                    <p className="expense-category text-muted">{expense.category || 'Other'}</p>
                   </div>
                   <div className="expense-details text-right">
                     <div className="expense-amount font-semibold">
-                      ${parseFloat(expense.amount).toFixed(2)}
+                      ${parseFloat(expense.amount || 0).toFixed(2)}
                     </div>
                     <div className="expense-date text-muted text-sm">
-                      {new Date(expense.date).toLocaleDateString()}
+                      {expense.date ? new Date(expense.date).toLocaleDateString() : '-'}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="empty-state">
+            <div className="empty-state text-center py-4">
               <h3>No expenses found</h3>
               <p>Start adding expenses to see them here</p>
             </div>

@@ -1,85 +1,80 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useExpense } from '../context/ExpenseContext';
-import { ArrowLeft, Save, DollarSign, Calendar, Tag, FileText } from 'lucide-react';
 
 const AddExpense = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { addExpense, updateExpense, getExpenseById, categories, loading } = useExpense();
+  const { addExpense, updateExpense, getExpenseById, loading } = useExpense();
 
   const isEditing = Boolean(id);
   const [formData, setFormData] = useState({
     title: '',
     amount: '',
-    category: '',
     date: new Date().toISOString().split('T')[0],
-    description: ''
+    description: '',
+    category: '' // Added category field
   });
 
   const [errors, setErrors] = useState({});
 
+  // Predefined categories
+  const categories = [
+    'Food',
+    'Transportation',
+    'Utilities',
+    'Entertainment',
+    'Healthcare',
+    'Shopping',
+    'Education',
+    'Others'
+  ];
+
   useEffect(() => {
-    if (isEditing && id) {
-      const expense = getExpenseById(id);
-      if (expense) {
-        setFormData({
-          title: expense.title,
-          amount: expense.amount.toString(),
-          category: expense.category,
-          date: new Date(expense.date).toISOString().split('T')[0],
-          description: expense.description || ''
-        });
+    const fetchExpense = async () => {
+      if (isEditing && id) {
+        try {
+          const expense = await getExpenseById(id);
+          if (expense) {
+            setFormData({
+              title: expense.title,
+              amount: expense.amount.toString(),
+              date: new Date(expense.date).toISOString().split('T')[0],
+              description: expense.description || '',
+              category: expense.category || ''
+            });
+          }
+        } catch (error) {
+          console.error('Failed to fetch expense:', error);
+        }
       }
-    }
+    };
+
+    fetchExpense();
   }, [id, isEditing, getExpenseById]);
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
-    }
-
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
     const parsedAmount = parseFloat(formData.amount);
     if (!formData.amount || isNaN(parsedAmount) || parsedAmount <= 0) {
       newErrors.amount = 'Please enter a valid amount';
     }
-
-    if (!formData.category) {
-      newErrors.category = 'Please select a category';
-    }
-
-    if (!formData.date) {
-      newErrors.date = 'Date is required';
-    }
-
+    if (!formData.date) newErrors.date = 'Date is required';
+    if (!formData.category) newErrors.category = 'Please select a category';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      console.warn('Form validation failed:', errors);
-      return;
-    }
+    if (!validateForm()) return;
 
     const expenseData = {
       ...formData,
@@ -94,17 +89,12 @@ const AddExpense = () => {
       } else {
         await addExpense(expenseData);
       }
-
-      console.log('✅ Expense saved successfully!');
       navigate('/expenses');
     } catch (error) {
-      console.error('❌ Error saving expense:', error.response?.data || error.message);
+      console.error('Error saving expense:', error.response?.data || error.message);
       alert('Failed to save expense. Please check console for details.');
     }
   };
-
-  const fallbackCategories = ['Food', 'Transport', 'Shopping', 'Bills', 'Other'];
-  const categoryOptions = categories?.length ? categories : fallbackCategories;
 
   return (
     <div className="add-expense-page">
@@ -112,7 +102,6 @@ const AddExpense = () => {
         <button className="btn btn-secondary" onClick={() => navigate('/expenses')}>
           Back to Expenses
         </button>
-
         <h1 className="text-3xl font-bold">
           {isEditing ? '✏ Edit Expense' : '➕ Add New Expense'}
         </h1>
@@ -127,17 +116,16 @@ const AddExpense = () => {
             <p className="card-subtitle">
               {isEditing
                 ? 'Modify the expense information below'
-                : 'Fill in the information about your expense with beautiful details'}
+                : 'Fill in the information about your expense'}
             </p>
           </div>
 
           <div className="card-body">
             <form onSubmit={handleSubmit} className="expense-form">
               <div className="form-grid grid grid-2">
+                {/* Title */}
                 <div className="form-group">
-                  <label className="form-label">
-                    💡 Title *
-                  </label>
+                  <label className="form-label">💡 Title *</label>
                   <input
                     type="text"
                     name="title"
@@ -149,10 +137,9 @@ const AddExpense = () => {
                   {errors.title && <span className="error-message">{errors.title}</span>}
                 </div>
 
+                {/* Amount */}
                 <div className="form-group">
-                  <label className="form-label">
-                    💵 Amount *
-                  </label>
+                  <label className="form-label">💵 Amount *</label>
                   <input
                     type="number"
                     name="amount"
@@ -166,32 +153,9 @@ const AddExpense = () => {
                   {errors.amount && <span className="error-message">{errors.amount}</span>}
                 </div>
 
+                {/* Date */}
                 <div className="form-group">
-                  <label className="form-label">
-                    🏷 Category *
-                  </label>
-                  <select
-                    name="category"
-                    className={`form-control ${errors.category ? 'error' : ''}`}
-                    value={formData.category}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled hidden>
-                      Select a category
-                    </option>
-                    {categoryOptions.map(category => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.category && <span className="error-message">{errors.category}</span>}
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">
-                    📅 Date *
-                  </label>
+                  <label className="form-label">📅 Date *</label>
                   <input
                     type="date"
                     name="date"
@@ -201,30 +165,50 @@ const AddExpense = () => {
                   />
                   {errors.date && <span className="error-message">{errors.date}</span>}
                 </div>
+
+                {/* Category */}
+                <div className="form-group">
+                  <label className="form-label">🏷️ Category *</label>
+                  <select
+                    name="category"
+                    className={`form-control ${errors.category ? 'error' : ''}`}
+                    value={formData.category}
+                    onChange={handleChange}
+                  >
+                    <option value="">-- Select Category --</option>
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category && <span className="error-message">{errors.category}</span>}
+                </div>
               </div>
 
+              {/* Description */}
               <div className="form-group">
                 <label className="form-label">📝 Description (Optional)</label>
                 <textarea
                   name="description"
                   className="form-control"
                   rows="3"
-                  placeholder="Add any additional details about this expense... ✨"
+                  placeholder="Add any additional details..."
                   value={formData.description}
                   onChange={handleChange}
                 />
               </div>
 
               <div className="form-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => navigate('/expenses')}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => navigate('/expenses')}
+                >
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading
-                    ? '💾 Saving...'
-                    : isEditing
-                      ? '✅ Update Expense'
-                      : '💾 Save Expense'}
+                  {loading ? '💾 Saving...' : isEditing ? '✅ Update Expense' : '💾 Save Expense'}
                 </button>
               </div>
             </form>
