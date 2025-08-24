@@ -2,7 +2,8 @@
 
 The **Expense Tracker System** is a full-stack web application built with the **MERN stack (MongoDB, Express.js, React.js, Node.js)**. It allows users to **add, edit, delete, and view expenses** while keeping track of total income and spending. The app is designed with a clean UI, smooth navigation, and robust backend APIs for financial data management.
 
-🌐 **Live Demo (if deployed)**: \[Add Netlify/Render/Heroku link here]
+🌐 **Live Demo (if deployed)**
+**Backend live** : https://expensetrackersystem-8rlm.onrender.com
 
 ---
 
