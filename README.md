@@ -11,7 +11,6 @@ The **Expense Tracker System** is a full-stack web application built with the **
 * [Overview](#overview)
 * [Features](#features)
 * [Tech Stack](#tech-stack)
-* [Screenshots](#screenshots)
 * [Installation & Setup](#installation--setup)
 * [Usage](#usage)
 * [API Endpoints](#api-endpoints)
@@ -126,40 +125,52 @@ npm run dev
 
 ---
 
-## 📂 Folder Structure
+expense-tracker-system/
+│
+├── backend/
+│   ├── config/
+│   │   └── db.js                  # MongoDB connection
+│   ├── controllers/
+│   │   ├── authController.js      # Login, Signup logic
+│   │   └── expenseController.js   # CRUD operations for expenses
+│   ├── middleware/
+│   │   └── authMiddleware.js      # JWT token validation
+│   ├── models/
+│   │   ├── User.js                # User schema
+│   │   └── Expense.js             # Expense schema
+│   ├── routes/
+│   │   ├── authRoutes.js          # Authentication routes
+│   │   └── expenseRoutes.js       # Expense routes
+│   ├── .env                       # Environment variables
+│   ├── server.js                  # Entry point for backend
+│   └── package.json
+│
+├── frontend/
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   └── ExpenseForm.jsx
+│   │   ├── context/
+│   │   │   └── ExpenseContext.jsx
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Expenses.jsx
+│   │   │   ├── AddExpense.jsx
+│   │   │   ├── Login.jsx
+│   │   │   └── Signup.jsx
+│   │   ├── utils/
+│   │   │   └── api.js              # Axios API calls
+│   │   ├── App.jsx
+│   │   ├── index.jsx
+│   │   └── style.css
+│   ├── .env
+│   └── package.json
+│
+└── README.md
 
-```
-ExpenseTrackerSystem/
-│── server/                      # Backend (Node.js + Express)
-│   ├── data/expenses.json       # Temporary/mock data
-│   ├── index.js                 # Entry point for backend server
-│   └── routes/                  # API routes (if created separately)
-│
-│── src/                         # Frontend (React + Vite)
-│   ├── assets/                  # Static files (icons, images)
-│   │   └── react.svg
-│   ├── components/              # Reusable UI components
-│   │   ├── ExpenseCard.jsx
-│   │   ├── Navigation.jsx
-│   │   └── StatCard.jsx
-│   ├── context/                 # Context API for global state
-│   │   └── ExpenseContext.jsx
-│   ├── pages/                   # Pages
-│   │   ├── AddExpense.jsx
-│   │   ├── Dashboard.jsx
-│   │   └── Expenses.jsx
-│   ├── App.css                  # Global styles
-│   ├── App.jsx                  # Root React component
-│   ├── index.css                # Entry CSS
-│   ├── main.jsx                 # React entry point
-│   └── vite.config.js           # Vite configuration
-│
-│── .gitignore
-│── eslint.config.js
-│── index.html                   # Base HTML file
-│── package.json                 # Dependencies & scripts
-│── README.md
-```
 
 ---
 
