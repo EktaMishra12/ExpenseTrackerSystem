@@ -124,6 +124,7 @@ npm run dev
 | DELETE | `/api/expenses/:id` | Delete expense by ID |
 
 ---
+```bash
 
 expense-tracker-system/
 │
@@ -161,11 +162,17 @@ expense-tracker-system/
 │   │   │   ├── AddExpense.jsx
 │   │   │   ├── Login.jsx
 │   │   │   └── Signup.jsx
-│   │   ├── utils/
-│   │   │   └── api.js              # Axios API calls
+│   │       ├── auth/
+│   │   │   └── Login.jsx
+            └── login.css 
+            └── signup.css 
+            └── Signup.jsx 
 │   │   ├── App.jsx
-│   │   ├── index.jsx
-│   │   └── style.css
+        ├── App.css
+│   │   ├── main.jsx
+│   │   ├── style.css
+        ├── axios.js
+        ├── index.css
 │   ├── .env
 │   └── package.json
 │
