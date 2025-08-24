@@ -1,0 +1,18 @@
+# netlify.toml
+
+[build]
+  # Command to build your project
+  command = "npm run build"
+  
+  # Directory to publish (Vite outputs here by default)
+  publish = "dist"
+
+# Optional: environment settings
+[build.environment]
+  NODE_VERSION = "20"  # Set your Node.js version (optional)
+
+# Optional: redirect all routes to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
