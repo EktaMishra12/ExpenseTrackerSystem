@@ -22,21 +22,21 @@ export default function Login() {
             return;
         }
 
-        // 1. Demo account login
+        // Demo account login
         if (email === 'demo@example.com' && password === 'demo123') {
             navigate('/dashboard');
             setIsLoading(false);
             return;
         }
 
-        // 2. Check registered users from localStorage (array format from Signup.jsx)
+        // Check registered users from localStorage
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const existingUser = users.find(
             (u) => u.email === email && u.password === password
         );
 
         if (existingUser) {
-            navigate('/dashboard'); // ✅ successful login
+            navigate('/dashboard');
         } else {
             setError('Invalid email or password');
         }
@@ -46,6 +46,12 @@ export default function Login() {
 
     return (
         <div className="login-page">
+            {/* 🔵 Floating Bubbles Background */}
+            <div className="bubbles">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
             {/* Header */}
             <header className="login-header">
                 <h1 className="logo">
@@ -120,6 +126,13 @@ export default function Login() {
                     </div>
                 </div>
             </div>
+
+            {/* Extra floating bubbles (big ones) */}
+            <div className="bubble" style={{ left: "10%", width: "20px", height: "20px" }}></div>
+            <div className="bubble" style={{ left: "30%", width: "40px", height: "40px" }}></div>
+            <div className="bubble" style={{ left: "50%", width: "25px", height: "25px" }}></div>
+            <div className="bubble" style={{ left: "70%", width: "35px", height: "35px" }}></div>
+            <div className="bubble" style={{ left: "90%", width: "15px", height: "15px" }}></div>
         </div>
     );
 }

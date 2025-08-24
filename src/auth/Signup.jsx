@@ -75,6 +75,12 @@ export default function Signup() {
 
     return (
         <div className="signup-page">
+            {/* 🔵 Floating Bubbles Background */}
+            <div className="bubbles">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
             {/* Header */}
             <header className="signup-header">
                 <h1 className="logo">
