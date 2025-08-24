@@ -101,21 +101,26 @@ body::before {
 .nav-links {
   display: flex;
   gap: 1.5rem;
-  flex-wrap: wrap; /* chhoti screen pe wrap ho jaaye */
+  flex-wrap: wrap;
+  /* chhoti screen pe wrap ho jaaye */
 }
 
 /* Navbar responsive fix */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column; /* navbar items vertical ho jaaye */
+    flex-direction: column;
+    /* navbar items vertical ho jaaye */
     align-items: flex-start;
-    padding: 1rem; /* thoda padding add karo */
+    padding: 1rem;
+    /* thoda padding add karo */
   }
 
   .nav-links {
-    flex-direction: column; /* links vertical ho jaaye */
+    flex-direction: column;
+    /* links vertical ho jaaye */
     gap: 1rem;
-    width: 100%; /* full width */
+    width: 100%;
+    /* full width */
   }
 }
 
