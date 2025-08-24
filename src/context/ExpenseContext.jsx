@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ExpenseContext = createContext();
 
-const API_BASE = 'http://localhost:5000/api/expenses';
+const API_BASE = import.meta.env.VITE_BACKEND_URL ||'http://localhost:5000/api/expenses';
 
 export const useExpense = () => {
   const context = useContext(ExpenseContext);
